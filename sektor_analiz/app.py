@@ -9,8 +9,9 @@ import plotly.graph_objects as go
 from pathlib import Path
 import os
 
-from data_loader import load_all_data, NACE_MAPPING
+from data_loader import load_all_data, NACE_MAPPING, NACE_TO_SECTOR
 from export_utils import export_excel, export_word
+from generate_report import create_academic_report
 
 # ── Sayfa ayarı ─────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -69,8 +70,32 @@ with st.sidebar:
     default_ana, default_sgk = find_default_files()
 
     st.subheader("Veri Kaynakları")
-    ana_file = st.file_uploader("Ana Dosya (TÜİK + SGK)", type=["xlsx"], key="ana")
-    sgk_file = st.file_uploader("SGK Bölüm 1 (Opsiyonel)", type=["xlsx"], key="sgk")
+
+    with st.expander("Yüklenmesi Gereken Dosyalar", expanded=False):
+        st.markdown("""
+**1. Ana Dosya (Zorunlu):**
+- **Dosya:** `SEKTÖR BAZLI İŞGÜCÜ EKONOMİK GÖSTERGESİ.xlsx`
+- Bu dosya aşağıdaki sayfaları içermelidir:
+  - **I.2.14** — TÜİK: Gelir Yöntemiyle GSYH, İktisadi Faaliyet Kollarına Göre (2009-2024)
+  - **TABLO-1.12** — SGK: NACE Rev.2 Faaliyet Gruplarına ve İşyeri Büyüklüğüne Göre İşyeri Sayıları
+  - **TABLO-1.13** — SGK: NACE Rev.2 Faaliyet Gruplarına ve İşyeri Büyüklüğüne Göre Zorunlu Sigortalı Sayıları
+
+**2. SGK Bölüm 1 (Opsiyonel - Önerilir):**
+- **Dosya:** SGK Yıllık İstatistik Yayını — Bölüm 1 (örn. `istatistik_yilligi_2024_bolum1.xlsx`)
+- Bu dosya aşağıdaki sayfayı içermelidir:
+  - **TABLO-1.16** — SGK: NACE Rev.2 Faaliyet Gruplarına Göre Prime Esas Ortalama Günlük Kazanç (daimi/geçici, kamu/özel, erkek/kadın)
+""")
+
+    ana_file = st.file_uploader(
+        "Ana Dosya (TÜİK I.2.14 + SGK 1.12/1.13)",
+        type=["xlsx"], key="ana",
+        help="SEKTÖR BAZLI İŞGÜCÜ EKONOMİK GÖSTERGESİ.xlsx"
+    )
+    sgk_file = st.file_uploader(
+        "SGK Bölüm 1 — TABLO-1.16 (Opsiyonel)",
+        type=["xlsx"], key="sgk",
+        help="SGK Yıllık İstatistik Bölüm 1: Günlük kazanç verileri"
+    )
 
     use_defaults = False
     if not ana_file and default_ana:
@@ -85,6 +110,7 @@ with st.sidebar:
         "👥 İstihdam Yapısı",
         "🎯 Kadran Analizi",
         "📋 Teşvik Kılavuzu",
+        "📖 Metodoloji",
         "📥 Rapor İndir",
     ])
 
@@ -561,9 +587,126 @@ elif page == "📋 Teşvik Kılavuzu":
         st.warning(f"**{risk}:** {desc}")
 
 
+elif page == "📖 Metodoloji":
+    st.title("Metodoloji ve Navigasyon Rehberi")
+
+    st.header("Navigasyon Rehberi")
+    st.markdown("""
+Bu uygulama, TÜİK ve SGK verilerini kullanarak Türkiye'deki sektörlerin işgücü maliyeti yapısını analiz etmektedir.
+Aşağıda her sayfanın ne sunduğu ve nasıl kullanılacağı açıklanmaktadır:
+
+| Sayfa | Amacı | Ne Bulursunuz? |
+|-------|-------|----------------|
+| **Özet Dashboard** | Büyük resmi görmek | 20 ana sektörün tüm temel göstergeleri, kadran sınıflandırması, scatter plot ve sıralama grafikleri |
+| **Trend Analizi** | Tarihsel değişimi izlemek | 2009-2024 arası sektörel işgücü maliyet oranı, GKD ve işgücü ödemesi trendleri; dönem karşılaştırması |
+| **İstihdam Yapısı** | Alt sektör detaylarını incelemek | NACE 2 haneli alt sektör kırılımları, işyeri büyüklüğü dağılımı, günlük kazanç ve cinsiyet farkları |
+| **Kadran Analizi** | Teşvik önceliklerini belirlemek | İstihdam payı × Maliyet oranı kadran matrisi, her kadrandaki sektörlerin detay tabloları |
+| **Teşvik Kılavuzu** | Politika önerilerini görmek | K1 sektör profilleri, SGK prim indirimi, bölgesel farklılaştırma, cinsiyet eşitliği önerileri |
+| **Metodoloji** | Analizin nasıl yapıldığını anlamak | Veri kaynakları, NACE eşleştirmesi, hesaplama formülleri, kadran sınıflandırma yöntemi |
+| **Rapor İndir** | Sonuçları almak | Excel raporu, Word raporu ve akademik analiz raporu (docx) |
+""")
+
+    st.divider()
+    st.header("Veri Kaynakları ve İçerikleri")
+
+    st.subheader("1. TÜİK Verileri")
+    st.markdown("""
+- **Tablo I.2.14 — Gelir Yöntemiyle GSYH** (kaynak dosya: `SEKTÖR BAZLI İŞGÜCÜ EKONOMİK GÖSTERGESİ.xlsx`)
+  - İktisadi faaliyet kollarına (NACE Rev.2 bölüm düzeyi, 20 ana sektör) göre:
+    - Gayrisafi Katma Değer (GKD) — Milyar TL, cari fiyatlarla
+    - İşgücüne Yapılan Ödemeler — Milyar TL
+    - İşletme Artığı (Brüt) — Milyar TL
+  - Dönem: 2009-2024 (yıllık)
+""")
+
+    st.subheader("2. SGK Verileri")
+    st.markdown("""
+- **TABLO-1.12 — İşyeri Sayıları** (kaynak dosya: `SEKTÖR BAZLI İŞGÜCÜ EKONOMİK GÖSTERGESİ.xlsx`)
+  - NACE Rev.2 faaliyet grupları (2 haneli, ~87 alt sektör) × İşyeri büyüklüğü (1, 2-3, ..., 1000+)
+- **TABLO-1.13 — Zorunlu Sigortalı Sayıları** (kaynak dosya: aynı)
+  - NACE Rev.2 faaliyet grupları × İşyeri büyüklüğü dağılımı
+- **TABLO-1.16 — Prime Esas Ortalama Günlük Kazanç** (kaynak dosya: SGK Bölüm 1)
+  - NACE Rev.2 faaliyet grupları × Daimi/Geçici, Kamu/Özel, Erkek/Kadın kırılımları
+""")
+
+    st.divider()
+    st.header("TÜİK - SGK Sektör Eşleştirmesi (NACE Mapping)")
+
+    st.markdown("""
+TÜİK'in GSYH tablosu (I.2.14) **20 ana sektör** (NACE Rev.2 bölüm düzeyi — tek harf kodu) kullanırken,
+SGK tabloları **NACE 2 haneli kodları** (~87 alt sektör) kullanmaktadır.
+
+Eşleştirme, uluslararası standart NACE Rev.2 hiyerarşisine dayalı olarak yapılmaktadır:
+- Her 2 haneli NACE kodu, üst düzey NACE bölümüne (A, B, C, ... T) karşılık gelir
+- Bu bölümler TÜİK'in 20 ana sektörüne birebir eşlenir
+
+**Eşleştirme yöntemi:** `data_loader.py` içindeki `NACE_MAPPING` sözlüğü, her ana sektör için ilgili 2 haneli NACE kodlarını tanımlar. `NACE_TO_SECTOR` ters eşleştirmesi ile SGK'daki her alt sektör ilgili ana sektöre atanır.
+""")
+
+    mapping_data = []
+    for sector, codes in NACE_MAPPING.items():
+        code_str = ", ".join([f"{c:02d}" for c in codes])
+        if len(codes) <= 3:
+            code_range = code_str
+        else:
+            code_range = f"{codes[0]:02d}-{codes[-1]:02d}"
+        mapping_data.append({"Ana Sektör (TÜİK)": sector, "NACE 2 Haneli Kodlar": code_range, "Alt Sektör Sayısı": len(codes)})
+
+    st.dataframe(pd.DataFrame(mapping_data), use_container_width=True, hide_index=True)
+
+    st.divider()
+    st.header("Hesaplama Formülleri")
+
+    st.markdown("""
+| Gösterge | Formül | Birimi | Açıklama |
+|----------|--------|--------|----------|
+| **İşgücü Maliyet Oranı** | İşgücü Ödemesi / GKD × 100 | % | Katma değerin ne kadarı işgücüne gidiyor |
+| **Kişi Başı Katma Değer** | GKD / Sigortalı Sayısı × 10⁹ | TL | İşgücü verimliliğinin bir göstergesi |
+| **Kişi Başı İşgücü Maliyeti** | İşgücü Ödemesi / Sigortalı Sayısı × 10⁹ | TL | Ortalama işgücü maliyeti |
+| **İstihdam Yoğunluğu** | Sektör Sigortalısı / Toplam × 100 | % | Sektörün toplam istihdamdaki payı |
+| **Maliyet Etkinliği** | GKD / İşgücü Ödemesi | Katsayı | 1 TL işgücüne karşı ne kadar katma değer üretiliyor |
+| **İşletme Artığı Payı** | İşletme Artığı / GKD × 100 | % | Sermaye getirisi payı |
+| **KOBİ Yoğunluğu** | <50 çalışanlı işyeri / Toplam işyeri × 100 | % | Küçük işletme oranı |
+| **Trend** | Maliyet Oranı (2024) − Maliyet Oranı (2019) | Puan | 5 yıllık maliyet baskısı değişimi |
+""")
+
+    st.divider()
+    st.header("Kadran Sınıflandırma Yöntemi")
+
+    st.markdown("""
+Sektörler iki eksen üzerinde medyan değerlere göre dört kadrana ayrılmaktadır:
+
+- **X Ekseni:** İstihdam Payı (%) — sektörün toplam istihdamdaki ağırlığı
+- **Y Ekseni:** İşgücü Maliyet Oranı (%) — işgücü ödemesinin katma değere oranı
+
+| Kadran | İstihdam Payı | Maliyet Oranı | Anlam | Politika Yanıtı |
+|--------|--------------|---------------|-------|-----------------|
+| **K1** | ≥ Medyan | ≥ Medyan | Yüksek İstihdam + Yüksek Maliyet | TEŞVİK ÖNCELİĞİ |
+| **K2** | ≥ Medyan | < Medyan | Yüksek İstihdam + Düşük Maliyet | Sürdürülebilir yapı, koruma |
+| **K3** | < Medyan | ≥ Medyan | Düşük İstihdam + Yüksek Maliyet | Yapısal dönüşüm |
+| **K4** | < Medyan | < Medyan | Düşük İstihdam + Düşük Maliyet | İzleme, stratejik destek |
+
+Medyan değerler verideki 20 sektörün ortanca değerleridir ve dinamik olarak hesaplanır.
+""")
+
+    st.divider()
+    st.header("Uluslararası Karşılaştırma Kaynakları")
+    st.markdown("""
+Akademik raporda kullanılan uluslararası kaynaklar:
+
+- **IMF** — World Economic Outlook (Ekim 2025, Ocak 2026): Küresel büyüme tahminleri, sektörel trendler
+- **OECD** — Türkiye Ekonomik İncelemesi (2025): Verimlilik, kadın işgücü, hizmetler sektörü önerileri
+- **OECD** — Taxing Wages 2025: Türkiye vergi takozu (%39,0 vs OECD ort. %34,9)
+- **Dünya Bankası** — Türkiye Ülke Ekonomik Memorandumu: İstihdam ile Refah
+- **ILO** — Dünya İstihdam ve Sosyal Görünüm 2025: Küresel istihdam eğilimleri
+- **UNIDO** — Sanayi İstatistikleri Yıllığı 2025: İmalat sektörü çarpan etkisi
+- **AB Komisyonu** — CBAM (Karbon Sınır Düzenleme Mekanizması): Türkiye etkisi
+""")
+
+
 elif page == "📥 Rapor İndir":
     st.title("Rapor İndir")
-    st.write("Analiz sonuçlarını Excel veya Word formatında indirebilirsiniz.")
+    st.write("Analiz sonuçlarını Excel, Word veya akademik rapor formatında indirebilirsiniz.")
 
     col1, col2 = st.columns(2)
 
@@ -592,6 +735,28 @@ elif page == "📥 Rapor İndir":
                 file_name="Sektor_Bazli_Isgucu_Analiz_Raporu.docx",
                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             )
+
+    st.divider()
+
+    st.subheader("📕 Akademik Analiz Raporu")
+    st.write("""Küresel ekonomik gelişmeler ve uluslararası kurumların (IMF, OECD, Dünya Bankası, ILO, UNIDO)
+    sektörel tahminleri ışığında Türkiye'de desteklenmesi gereken sektörleri belirleyen, atıf kurallarına
+    uygun akademik rapor. İçerik: Yönetici Özeti, Küresel Görünüm, Sektörel Analiz, Kadran Analizi,
+    Uluslararası Kurum Değerlendirmeleri, Stratejik Öncelikli Sektörler, Politika Önerileri, Kaynakça.""")
+    if st.button("Akademik Rapor Oluştur", type="primary"):
+        with st.spinner("Akademik rapor hazırlanıyor..."):
+            import tempfile
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp_report:
+                create_academic_report(data, tmp_report.name)
+                tmp_report.seek(0)
+                with open(tmp_report.name, "rb") as f:
+                    report_bytes = f.read()
+        st.download_button(
+            "📥 Akademik Rapor İndir (.docx)",
+            data=report_bytes,
+            file_name="Kuresel_Gelismeler_Isiginda_Sektorel_Analiz_Raporu.docx",
+            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        )
 
     st.divider()
     st.subheader("Veri Özeti")
