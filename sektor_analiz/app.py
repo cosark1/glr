@@ -199,7 +199,7 @@ if page == "📊 Özet Dashboard":
             return "background-color: #E3F2FD"
         return ""
 
-    styled = df_display.style.applymap(color_kadran, subset=["Kadran"]).format({
+    styled = df_display.style.map(color_kadran, subset=["Kadran"]).format({
         "GKD (Myr TL)": "{:,.1f}",
         "İşgücü (Myr TL)": "{:,.1f}",
         "Maliyet Oranı (%)": "{:.1f}",
