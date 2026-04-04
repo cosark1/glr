@@ -267,6 +267,19 @@ if page == "📊 Özet Dashboard":
                   annotation_text=f"Medyan İstihdam: %{med_emp:.1f}")
     fig.update_layout(height=550, template="plotly_white")
     st.plotly_chart(fig, use_container_width=True)
+    with st.expander("📌 Bu grafiği nasıl okumalıyım?", expanded=False):
+        st.markdown("""
+**Kadran dağılım grafiği:** Her nokta bir sektörü temsil eder.
+- **Yatay eksen (X):** Sektörün toplam istihdamdaki payı — ne kadar sağdaysa o kadar büyük istihdam kütlesi.
+- **Dikey eksen (Y):** İşgücü maliyet oranı — ne kadar yukarıdaysa işgücü maliyeti katma değere oranla o kadar yüksek.
+- **Kesik çizgiler:** Medyan değerleri gösterir; bu çizgiler grafiği 4 kadrana böler.
+- **🔴 K1 (sağ üst):** Hem büyük istihdam hem yüksek maliyet → teşvik politikasının birincil hedefi.
+- **🟢 K2 (sağ alt):** Büyük istihdam, düşük maliyet → sağlıklı sektörler, izlemeye devam.
+- **🟡 K3 (sol üst):** Küçük istihdam, yüksek maliyet → verimlilik sorunu olan niş sektörler.
+- **🔵 K4 (sol alt):** Küçük istihdam, düşük maliyet → stratejik büyüme potansiyeli taşıyabilir.
+
+**Nokta üzerine gelin:** Sektör adı, maliyet etkinliği, günlük kazanç ve KOBİ oranı görüntülenir.
+""")
 
     # Bar chart - maliyet oranı
     st.subheader("Sektörel İşgücü Maliyet Oranı Sıralaması")
@@ -284,6 +297,17 @@ if page == "📊 Özet Dashboard":
     )
     fig2.update_layout(height=600, template="plotly_white", showlegend=False)
     st.plotly_chart(fig2, use_container_width=True)
+    with st.expander("📌 Bu grafiği nasıl okumalıyım?", expanded=False):
+        st.markdown("""
+**Maliyet oranı sıralama grafiği:** Sektörler işgücü maliyet oranına göre küçükten büyüğe sıralanmıştır.
+- **Kısa bar:** İşgücü maliyeti katma değere oranla düşük → verimli veya sermaye yoğun yapı.
+- **Uzun bar:** İşgücü maliyeti yüksek → emek yoğun veya düşük katma değerli yapı, maliyet baskısı var.
+- **Renk:** Sektörün kadran atamasını gösterir (K1=kırmızı, K2=yeşil, K3=turuncu, K4=mavi).
+- **%50 eşiği:** Bu değerin üzerindeki sektörlerde katma değerin yarısından fazlası işgücüne gitmektedir.
+- **%70 üzeri:** Kritik eşik — katma değerin büyük çoğunluğu işgücü maliyetini karşılamaya gidiyor, büyüme ve yatırım için dar alan kalıyor.
+
+**Ne yapmalı:** Üst sıralardaki K1 sektörlerine odaklanın; hem büyük istihdam taşıyorlar hem de en yüksek maliyet baskısıyla karşı karşıyalar.
+""")
 
 
 elif page == "📈 Trend Analizi":
@@ -304,6 +328,15 @@ elif page == "📈 Trend Analizi":
                           markers=True)
             fig.update_layout(height=500, template="plotly_white")
             st.plotly_chart(fig, use_container_width=True)
+            with st.expander("📌 Bu grafiği nasıl okumalıyım?", expanded=False):
+                st.markdown("""
+**İşgücü maliyet oranı trendi (2009-2024):** Her sektörün zaman içinde ne kadar maliyet baskısı yaşadığını gösterir.
+- **Yükselen eğri:** İşgücü maliyeti katma değere göre artıyor → yapısal baskı büyüyor, teşvik ihtiyacı artıyor.
+- **Düşen eğri:** Verimlilik artışı veya katma değer büyümesi işgücü artışını geride bırakıyor → olumlu sinyal.
+- **2018 sonrası:** Türkiye'de kur şoku ve enflasyon dönemlerinde birçok sektörde keskin hareketler izlenebilir.
+- **2020 çukuru:** COVID-19 etkisi — üretim düşerken işgücü ödemeleri yavaş uyum sağladığından bazı sektörlerde oran yükseldi.
+- **Sektörler arası makas:** İki sektörün eğrisi birbirinden uzaklaşıyorsa aralarındaki yapısal fark derinleşiyor demektir.
+""")
 
         with tab2:
             fig2 = px.line(filtered, x="yil", y="gkd", color="sektor",
@@ -311,6 +344,14 @@ elif page == "📈 Trend Analizi":
                            markers=True)
             fig2.update_layout(height=500, template="plotly_white")
             st.plotly_chart(fig2, use_container_width=True)
+            with st.expander("📌 Bu grafiği nasıl okumalıyım?", expanded=False):
+                st.markdown("""
+**GKD trendi (2009-2024):** Sektörlerin ürettiği katma değerin yıllar içindeki nominal seyri.
+- **Dikkat:** Bu değerler **nominal** (enflasyon dahil) TL cinsinden olduğundan eğimli büyüme kısmen enflasyonu yansıtır. Reel büyümeyi görmek için TÜFE ile deflate etmek gerekir.
+- **Hızlı yükselen sektörler:** Nominal büyüme güçlü — ancak maliyet oranı da yükseliyorsa verimlilik artmıyor, sadece fiyatlar şişiyor olabilir.
+- **Yatay seyreden sektörler:** Büyüme durgunluğu veya yapısal bir tavan sorunu olabilir.
+- **2022-2024 dönemi:** Yüksek enflasyon tüm serilerde belirgin nominal sıçrama yaratmıştır; bu dönemdeki büyüme oranları abartılı görünebilir.
+""")
 
         with tab3:
             fig3 = px.line(filtered, x="yil", y="isgucu", color="sektor",
@@ -318,6 +359,15 @@ elif page == "📈 Trend Analizi":
                            markers=True)
             fig3.update_layout(height=500, template="plotly_white")
             st.plotly_chart(fig3, use_container_width=True)
+            with st.expander("📌 Bu grafiği nasıl okumalıyım?", expanded=False):
+                st.markdown("""
+**İşgücü ödemesi trendi (2009-2024):** Sektörlerin ödediği toplam ücret + SSK yükünün nominal seyri.
+- Bu grafik GKD trendi ile birlikte okunmalıdır. İkisi arasındaki büyüme hızı farkı maliyet oranını belirler.
+- **İşgücü ödemesi GKD'den hızlı büyüyorsa:** Maliyet oranı artıyor → baskı var.
+- **GKD işgücü ödemesinden hızlı büyüyorsa:** Verimlilik artışı gerçekleşiyor → sağlıklı yapı.
+- **Sektörler arası karşılaştırma:** Aynı işgücü ödemesi büyümesine rağmen GKD büyümesi farklıysa sektörler arasında verimlilik uçurumu olduğu anlaşılır.
+- **2020 pandemi yılı:** Bazı sektörlerde istihdam düşerken ödemeler yavaş geriledi — kısa çalışma ödeneği ve nakdi ücret desteği etkili oldu.
+""")
 
         # Karşılaştırma tablosu
         st.subheader("Dönem Karşılaştırması")
@@ -427,6 +477,15 @@ elif page == "👥 İstihdam Yapısı":
                      color="Sigortalı Sayısı", color_continuous_scale="Blues")
         fig.update_layout(height=400, template="plotly_white")
         st.plotly_chart(fig, use_container_width=True)
+        with st.expander("📌 Bu grafiği nasıl okumalıyım?", expanded=False):
+            st.markdown("""
+**İşyeri büyüklüğüne göre istihdam dağılımı:** Kaç kişilik işyerlerinde kaç çalışan istihdam edildiğini gösterir.
+- **Sol taraf (1-9 çalışan):** Mikro işletmeler — Türkiye ekonomisinde istihdam ağırlıklı olarak bu grupta yoğunlaşır.
+- **Sağa gidildikçe:** İşyeri büyüklüğü artıyor; büyük kuruluşlar daha az sayıda ama büyük istihdam bloklarıdır.
+- **Teşvik tasarımı için:** Barın en yüksek olduğu büyüklük kademesi, teşvik politikasının ulaşması gereken ana hedef kitlesini gösterir.
+- **KOBİ sınırı:** 50 çalışanın altındaki işyerleri KOBİ sayılır. Bu çizginin solundaki toplam, Türkiye'nin KOBİ istihdam kütlesini verir.
+- **Yoğunluk sağa kaymışsa:** Büyük işletme istihdamı önemli — teşvik tasarımında ölü ağırlık kaybı riski artar (büyükler zaten istihdam yaratacaktı).
+""")
 
         # KOBİ vs Büyük karşılaştırma
         kobi_cols = ["boy_1", "boy_2-3", "boy_4-6", "boy_7-9", "boy_10-19", "boy_20-29", "boy_30-49"]
@@ -458,6 +517,15 @@ elif page == "👥 İstihdam Yapısı":
                          hover_data={"toplam_sigortali": ":,.0f"})
             fig.update_layout(height=600, template="plotly_white")
             st.plotly_chart(fig, use_container_width=True)
+            with st.expander("📌 Bu grafiği nasıl okumalıyım?", expanded=False):
+                st.markdown("""
+**Sektöre göre ortalama günlük kazanç:** SGK prime esas kazancın sektör bazında ortalaması.
+- **Renk skalası (kırmızı→sarı→yeşil):** Kırmızı = düşük ücret, yeşil = yüksek ücret.
+- **En uzun bar / en yeşil:** En yüksek ücret düzeyi — genellikle bilgi-iletişim, finans, enerji gibi yüksek katma değerli sektörler.
+- **En kısa bar / en kırmızı:** En düşük ücret — tarım, konaklama, tekstil alt sektörleri tipik olarak burada yer alır.
+- **Kazanç düşük + istihdam yüksekse:** Bu sektör hem büyük hem düşük ücretli — politika müdahalesine en çok ihtiyaç duyan yapı.
+- **Not:** Bu değer SGK prime esas kazanç olup fiili net geliri değil, brüt prime tabi kazancı göstermektedir. Kayıt dışı kısım bu rakamlara dahil değildir.
+""")
 
             # Cinsiyet farkı
             st.subheader("Cinsiyet Bazlı Günlük Kazanç Farkı")
@@ -476,6 +544,16 @@ elif page == "👥 İstihdam Yapısı":
             fig2.update_layout(barmode="group", height=600, template="plotly_white",
                                xaxis_title="Ortalama Günlük Kazanç (TL)")
             st.plotly_chart(fig2, use_container_width=True)
+            with st.expander("📌 Bu grafiği nasıl okumalıyım?", expanded=False):
+                st.markdown("""
+**Cinsiyet bazlı günlük kazanç farkı:** Her sektörde erkek ve kadın çalışanların ortalama günlük kazancı yan yana gösterilmektedir.
+- **Mavi bar (Erkek) uzunsa:** O sektörde erkekler daha yüksek kazanıyor.
+- **Kırmızı bar (Kadın) erkek bara yakınsa:** Cinsiyet ücret uçurumu az — görece eşitlikçi yapı.
+- **İki bar arasındaki makas büyükse:** Cinsiyete dayalı ücret eşitsizliği var — politika müdahalesine ihtiyaç var.
+- **Sıralama:** Grafik cinsiyet fark yüzdesine göre sıralanmıştır; en üstteki sektörde fark en az, en alttaki sektörde fark en fazladır.
+- **Dikkat:** Kazanç farkı her zaman ayrımcılığı göstermez; mesleğe, kıdeme, tam/yarı zamanlı çalışmaya veya sektör içi farklı pozisyonlara da bağlı olabilir.
+- **Politika çıkarımı:** Kadın istihdamı hem yoğun hem de ücret farkının yüksek olduğu sektörler çift öncelikli müdahale alanıdır.
+""")
         else:
             st.info("Günlük kazanç verisi için SGK Bölüm 1 dosyasını yükleyin.")
 
@@ -544,6 +622,21 @@ elif page == "🎯 Kadran Analizi":
     fig.update_layout(height=650, template="plotly_white",
                       legend=dict(orientation="h", yanchor="bottom", y=-0.2))
     st.plotly_chart(fig, use_container_width=True)
+    with st.expander("📌 Bu grafiği nasıl okumalıyım?", expanded=False):
+        st.markdown("""
+**Kadran analizi baloncuk grafiği:** Dashboard'daki scatter'ın daha detaylı versiyonu.
+- **Yatay eksen (X):** İstihdam payı — sağa gidildikçe sektör daha fazla çalışan istihdam ediyor.
+- **Dikey eksen (Y):** İşgücü maliyet oranı — yukarı gidildikçe maliyet baskısı artıyor.
+- **Balonun büyüklüğü:** Sektörün gayrisafi katma değeri (GKD) — büyük balon = ekonomide daha büyük ağırlık.
+- **Balonun üzerindeki etiket:** Sektör adı.
+- **Nokta üzerine gelince:** Maliyet etkinliği, kişi başı GKD, KOBİ oranı, günlük kazanç ve 5 yıllık trend görüntülenir.
+
+**Stratejik okuma:**
+- **Sağ üstte büyük balon (K1):** Hem büyük istihdam hem yüksek maliyet hem de büyük ekonomik kütle → politika etkisi en yüksek bu sektörde.
+- **Sol üstte küçük balon (K3):** Küçük istihdam ama yüksek maliyet → verimsiz niş sektör, öncelik düşük.
+- **Sağ altta büyük balon (K2):** İdeal yapı — büyük ve verimli; desteklenip korunmalı.
+- **Trend değeri pozitifse:** Son 5 yılda maliyet oranı artıyor — balonun konumu yakında K2'den K1'e kayabilir.
+""")
 
     # Kadran detay tabloları
     st.divider()
