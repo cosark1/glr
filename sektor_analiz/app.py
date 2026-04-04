@@ -65,6 +65,13 @@ with st.sidebar:
     st.title("Sektörel İşgücü Analizi")
     st.caption("TÜİK + SGK Verileri")
 
+    from datetime import date
+    _months = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran",
+               "Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"]
+    _today = date.today()
+    _date_str = f"{_today.day} {_months[_today.month-1]} {_today.year}"
+    st.caption(f"🗓 Son güncelleme: {_date_str}  |  v2.4")
+
     st.divider()
 
     default_ana, default_sgk = find_default_files()

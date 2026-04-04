@@ -9,6 +9,16 @@ from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.enum.section import WD_ORIENT
 import os
 import sys
+from datetime import date
+
+REPORT_VERSION = "2.4"
+REPORT_DATE = date.today().strftime("%d %B %Y").replace(
+    "January", "Ocak").replace("February", "Şubat").replace(
+    "March", "Mart").replace("April", "Nisan").replace(
+    "May", "Mayıs").replace("June", "Haziran").replace(
+    "July", "Temmuz").replace("August", "Ağustos").replace(
+    "September", "Eylül").replace("October", "Ekim").replace(
+    "November", "Kasım").replace("December", "Aralık")
 
 sys.path.insert(0, os.path.dirname(__file__))
 from data_loader import load_all_data
@@ -99,7 +109,7 @@ def create_academic_report(data: dict, output_path: str):
     date_p = doc.add_paragraph()
     date_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     date_p.paragraph_format.first_line_indent = Cm(0)
-    date_p.add_run("Mart 2026").font.size = Pt(11)
+    date_p.add_run(f"{REPORT_DATE}  |  Sürüm {REPORT_VERSION}").font.size = Pt(11)
 
     doc.add_page_break()
 
