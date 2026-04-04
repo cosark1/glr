@@ -220,6 +220,23 @@ if page == "📊 Özet Dashboard":
 
     st.dataframe(styled, use_container_width=True, height=600)
 
+    with st.expander("📌 Bu tabloyu nasıl okumalıyım?", expanded=False):
+        st.markdown("""
+**Sütun açıklamaları:**
+- **GKD (Myr TL):** Sektörün 2024 yılı gayrisafi katma değeri. Ne kadar büyük olursa ekonomiye katkısı o kadar yüksektir.
+- **İşgücü (Myr TL):** Sektörde işgücüne yapılan toplam ödeme (ücret + SSK).
+- **Maliyet Oranı (%):** İşgücü ödemesinin GKD'ye oranı. **Yüksek oran → işgücü maliyeti baskısı var**, düşük oran → sermaye yoğun veya verimli yapı.
+- **Maliyet Etkinliği:** 1 TL işgücü ödemesiyle kaç TL katma değer üretiliyor. **2,0'ın altı zayıf, 3,0'ın üzeri güçlü** performansa işaret eder.
+- **İstihdam Payı (%):** Sektörün toplam formel istihdamdaki ağırlığı.
+- **KOBİ Oranı (%):** 50'den az çalışanlı işyerlerinin payı. **%95 üzeri → mikro işletme egemen yapı**, teşvik tasarımında farklı araç gerektirir.
+- **Kadran:** K1 = yüksek istihdam + yüksek maliyet (🔴 öncelikli), K2 = yüksek istihdam + düşük maliyet (🟢), K3 = düşük istihdam + yüksek maliyet (🟡), K4 = düşük istihdam + düşük maliyet (🔵).
+
+**Nelere dikkat et:**
+- Maliyet Oranı **%60'ın üzerindeyse** sektörde işgücü maliyeti ciddi baskı oluşturuyor demektir.
+- Maliyet Etkinliği **1'in altındaysa** üretilen katma değer işgücü maliyetinin bile altında kalıyor — bu nadir ama kritik bir sinyaldir.
+- K1 sektörleri teşvik politikasının birincil hedef grubudur; hem büyük istihdam kütlesi hem de maliyet baskısı taşıdıklarından marjinal teşvik etkisi en yüksek bu grupta beklenir.
+""")
+
     # Scatter plot
     st.subheader("İstihdam Payı vs İşgücü Maliyet Oranı")
     fig = px.scatter(
@@ -328,6 +345,17 @@ elif page == "📈 Trend Analizi":
                     })
             if comp_data:
                 st.dataframe(pd.DataFrame(comp_data), use_container_width=True)
+                with st.expander("📌 Bu tabloyu nasıl okumalıyım?", expanded=False):
+                    st.markdown(f"""
+**Dönem karşılaştırması ne gösteriyor?**
+- **Maliyet Oranı Değişimi (puan):** Seçilen iki yıl arasında işgücü maliyet baskısının artıp azalmadığını gösterir. **Pozitif değer → maliyet baskısı arttı**, negatif → yapısal iyileşme var.
+- **GKD Büyüme (x):** Sektörün katma değerinin kaç katına çıktığını gösterir. Örneğin 3,5x → bu sektörün GKD'si {y1}-{y2} arasında 3,5 kat büyümüş demektir.
+
+**Nelere dikkat et:**
+- Maliyet oranı artarken GKD büyümesi düşükse → sektörde verimlilik kaybı var, teşvik gereksinimi artıyor.
+- Maliyet oranı düşerken GKD güçlü büyümüşse → sektör kendi kendini iyileştiriyor, teşvik önceliği görece düşük.
+- Enflasyon döneminde GKD büyüme çarpanı reel değil nominal büyümeyi yansıtır; reel karşılaştırma için TÜFE deflator uygulanması gerekir.
+""")
 
 
 elif page == "👥 İstihdam Yapısı":
@@ -362,6 +390,20 @@ elif page == "👥 İstihdam Yapısı":
             use_container_width=True,
             height=500,
         )
+
+        with st.expander("📌 Bu tabloyu nasıl okumalıyım?", expanded=False):
+            st.markdown("""
+**Alt sektör detayı ne gösteriyor?**
+- Tablo, SGK'nın NACE Rev.2 sınıflandırmasına göre 2 haneli faaliyet kodları bazında sigortalı sayılarını listeler.
+- **NACE kodu:** Uluslararası standart sektör sınıflandırması. Örneğin 10 = Gıda ürünleri imalatı, 41 = Bina inşaatı.
+- **Sigortalı:** O NACE kodunda SGK'ya kayıtlı çalışan sayısı. Kayıt dışı çalışanlar bu sayıya dahil **değildir**.
+- **Ort. Günlük Kazanç (TL):** SGK prime esas kazancın günlük ortalaması. Yüksek değer → nitelikli/yüksek ücretli istihdam yoğun yapı.
+
+**Nelere dikkat et:**
+- En üstteki satırlar o sektördeki en büyük istihdam yoğunluğunu taşıyan alt sektörlerdir — teşvik tasarımında önce buraya odaklanılmalıdır.
+- Aynı ana sektör içinde günlük kazanç büyük farklılık gösteriyorsa alt sektörler arasında nitelik uçurumu vardır.
+- Sigortalı sayısı düşük ama kazanç yüksekse → niş, yüksek katma değerli bir alt sektördür.
+""")
 
         st.metric("Toplam Sigortalı (Filtre)", f"{df_show['toplam'].sum():,.0f}")
 
@@ -519,6 +561,22 @@ elif page == "🎯 Kadran Analizi":
     avail_cols = [c for c in detail_cols if c in k_data.columns]
     st.dataframe(k_data[avail_cols].rename(columns=detail_names), use_container_width=True)
 
+    with st.expander("📌 Bu tabloyu nasıl okumalıyım?", expanded=False):
+        st.markdown("""
+**Kadran detay tablosu ne gösteriyor?**
+- Seçilen kadrandaki tüm sektörlerin karşılaştırmalı göstergeleri bir arada sunulmaktadır.
+- **Etkinlik:** 1 TL işgücü ödemesiyle üretilen katma değer katsayısı. Aynı kadran içinde etkinliği yüksek sektörlere teşvik daha hızlı geri döner.
+- **Kişi Başı GKD (TL):** Sigortalı başına düşen katma değer. Yüksek değer → verimli istihdam yapısı.
+- **Kadın (%):** Sektördeki kadın sigortalı oranı. Düşük oran → kadın istihdamı potansiyeli, ek teşvik gerekçesi.
+- **KOBİ (%):** Küçük işletme yoğunluğu. Yüksekse teşvik tasarımı mikro/küçük işletmeye odaklanmalıdır.
+- **Trend (puan):** Son 5 yılda maliyet oranının değişimi. **Pozitif → maliyet baskısı artıyor**, negatif → yapısal iyileşme var.
+
+**Nelere dikkat et:**
+- K1 içinde trend değeri yüksek olan sektörler → maliyet baskısı hızlanıyor, acil teşvik ihtiyacı en fazla bunlarda.
+- K2 içinde kadın oranı düşükse → mevcut düşük maliyet avantajını kadın istihdamı teşvikiyle birleştirmek için uygun zemin.
+- K3'te kişi başı GKD yüksekse → küçük ama verimli sektör; büyüme potansiyeli var, hedefli destek değer yaratır.
+""")
+
 
 elif page == "📋 Teşvik Kılavuzu":
     st.title("İstihdam Teşviki Politika Kılavuzu")
@@ -660,6 +718,19 @@ Eşleştirme, uluslararası standart NACE Rev.2 hiyerarşisine dayalı olarak ya
         mapping_data.append({"Ana Sektör (TÜİK)": sector, "NACE 2 Haneli Kodlar": code_range, "Alt Sektör Sayısı": len(codes)})
 
     st.dataframe(pd.DataFrame(mapping_data), use_container_width=True, hide_index=True)
+
+    with st.expander("📌 Bu tabloyu nasıl okumalıyım?", expanded=False):
+        st.markdown("""
+**NACE eşleştirme tablosu ne gösteriyor?**
+- TÜİK, GSYH verisini 20 geniş ana sektörde raporlarken; SGK, sigortalı verilerini NACE Rev.2 standartına göre 87 adet 2 haneli kod bazında yayımlar.
+- Bu tablo, her TÜİK ana sektörüne hangi SGK/NACE kodlarının karşılık geldiğini gösterir. Analiz bu eşleştirme üzerinden kurulmuştur.
+- **Alt Sektör Sayısı:** Bir ana sektöre kaç NACE kodu dahil edildiği. Sayı fazlaysa o ana sektör çok çeşitli faaliyetleri kapsamaktadır.
+
+**Nelere dikkat et:**
+- NACE kodu aralığı geniş olan sektörler (örneğin İmalat: 10-33) heterojen bir yapı taşır; alt sektörler arasında maliyet ve istihdam profili ciddi farklılık gösterebilir.
+- Eşleştirme standart Eurostat/NACE Rev.2 sınıflandırmasına dayanmakta olup TÜİK'in yayımladığı sektör adları ile birebir örtüşecek şekilde yapılandırılmıştır.
+- Eşleştirmede belirsizlik olan durumlar (örneğin karma faaliyetler) analizde en yakın ana sektöre atanmıştır.
+""")
 
     st.divider()
     st.header("Hesaplama Formülleri")
