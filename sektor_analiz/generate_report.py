@@ -173,9 +173,13 @@ def create_academic_report(data: dict, output_path: str):
     add_para(
         f"Kadran analizine göre {len(k1)} sektör hem yüksek istihdam kapasitesine sahip hem de yüksek "
         f"işgücü maliyeti taşımaktadır. Bu sektörler —İmalat Sanayi, İnşaat, İdari ve Destek Hizmetleri, "
-        f"Konaklama ve Yiyecek, Sağlık, Mesleki Faaliyetler, Eğitim ve Kamu Yönetimi— toplam istihdamın "
-        f"yaklaşık %75'ini oluşturmakta ve istihdam teşviki politikalarının öncelikli hedef grubunu "
-        f"oluşturmaktadır."
+        f"Konaklama ve Yiyecek, Sağlık, Mesleki Faaliyetler ve Eğitim— toplam istihdamın yaklaşık "
+        f"%70'ini oluşturmakta ve istihdam teşviki politikalarının öncelikli hedef grubunu "
+        f"oluşturmaktadır. Kamu Yönetimi ve Savunma sektörü istatistiksel olarak Kadran 1'de yer "
+        f"almakla birlikte, bu sektörün gayrisafi katma değeri ulusal hesaplarda piyasa çıktısı "
+        f"yerine girdi maliyeti (ağırlıklı olarak ücretler) esas alınarak ölçüldüğünden maliyet "
+        f"etkinliği oranı yapısal olarak ~1'e yakın çıkmaktadır. Piyasa mekanizması işlemediğinden "
+        f"bu sektör kadran bazlı teşvik politikası kapsamı dışında tutulmaktadır."
     )
 
     add_para(
@@ -291,6 +295,14 @@ def create_academic_report(data: dict, output_path: str):
         for j, val in enumerate(row_data):
             t.rows[i+1].cells[j].text = val
     add_para("Kaynak: IMF World Economic Outlook, Ocak 2026; Ekim 2025.", italic=True, indent=False)
+    add_para(
+        "Not: IMF sınıflandırmasında 'Gelişmiş Ekonomiler' kategorisi; ABD, Almanya, Fransa, "
+        "İngiltere, Japonya, Kanada, İtalya, Avustralya, Güney Kore, İspanya, Hollanda, Belçika, "
+        "İsviçre, İsveç, Norveç, Danimarka, Avusturya, Finlandiya, Yeni Zelanda, İrlanda ve diğer "
+        "yüksek gelirli OECD üyelerini kapsamaktadır. Türkiye IMF sınıflandırmasında 'Gelişmekte "
+        "Olan Piyasalar ve Gelişmekte Olan Ekonomiler' grubunda yer almaktadır.",
+        italic=True, indent=False
+    )
 
     add_para(
         "Ekim 2025 WEO'sunda \"Değişim İçinde Küresel Ekonomi, Görünüm Karanlık\" başlığıyla yayımlanan "
@@ -812,22 +824,50 @@ def create_academic_report(data: dict, output_path: str):
         "Avrupa'da aileleri bekarlardan farklı vergilendirmeyen tek ülke konumundadır (OECD, 2025d)."
     )
 
-    add_para("Tablo 6. OECD Vergi Takozu ve İşveren SGK Yükü Karşılaştırması (2024-2025)", bold=True, indent=False)
-    tw_table = doc.add_table(rows=6, cols=4)
+    add_para(
+        "Vergi takozunun bileşenlerini anlamak için önce Türkiye'nin gelir vergisi yapısını netleştirmek "
+        "gerekir. Türkiye'de 2022 yılından itibaren asgari ücret tutarına karşılık gelen gelir gelir "
+        "vergisinden muaf tutulmuştur (Gelir Vergisi Kanunu md.23/18). Dolayısıyla asgari ücret düzeyinde "
+        "çalışan kişiler gelir vergisi ödememektedir. Ancak ortalama ücret alanlar —ki bu tutar asgari "
+        "ücretin üzerindedir— artan oranlı dilim yapısı (2024: %15, %20, %27, %35, %40) kapsamında "
+        "gelir vergisi ödemektedir. OECD Taxing Wages raporunda kullanılan 'ortalama ücretli çalışan' "
+        "(%100 APW) profili, bu muafiyetin üzerinde bir gelir düzeyine karşılık geldiğinden Türkiye'nin "
+        "%39,0 vergi takozu rakamı gelir vergisini de içermektedir."
+    )
+    add_para(
+        "Vergi takozu hesaplama formülü: Vergi Takozu (%) = (Gelir Vergisi + Çalışan SGK Payı + "
+        "İşveren SGK Payı − Nakit Transferler) / Toplam İşgücü Maliyeti × 100. Türkiye'de bileşenler "
+        "yaklaşık olarak: Gelir vergisi ~%8-10 (ortalama ücretli için); Çalışan SGK payı %15 "
+        "(emeklilik %9 + sağlık %5 + işsizlik %1); İşveren SGK payı %22,75 (fiili uygulanan "
+        "teşviklerle ~%17,5'e kadar düşebilir); Nakit transferler sınırlı. Toplam işgücü maliyeti = "
+        "brüt ücret + işveren SGK payı. Bu formülün sonucu ortalama ücretli için yaklaşık %39'a "
+        "ulaşmaktadır.",
+        italic=True, indent=False
+    )
+    add_para("Tablo 6. OECD Vergi Takozu ve SGK Yükü Karşılaştırması (2024)", bold=True, indent=False)
+    tw_table = doc.add_table(rows=7, cols=4)
     tw_table.style = "Light Grid Accent 1"
     tw_table.alignment = WD_TABLE_ALIGNMENT.CENTER
     tw_headers = ["Gösterge", "Türkiye", "OECD Ortalaması", "Örnekler"]
     tw_data = [
-        ["Vergi takozu (bekar, ort. ücret)", "%39,0", "%34,9",
-         "Belçika %52,6; Almanya %47,9; Fransa %47,2"],
-        ["Vergi takozu (evli, 2 çocuk)", "%39,0", "%25,7",
-         "Türkiye evliler için de bekarlarla aynı — OECD'de tek istisna"],
-        ["İşveren SGK (fiili, teşvik sonrası)", "%17,5", "~%13-15",
-         "İngiltere %15; Almanya ~%20; Fransa ~%28-30"],
-        ["İşveren SGK (yasal, tüm primler)", "%22,75", "~%19-21",
-         "Sağlık+emeklilik+işsizlik toplamı; ülkeden ülkeye farklı"],
-        ["Vergi takozunda en yüksek: Belçika", "%52,6", "OECD içi en yüksek",
-         "Türkiye OECD içinde üst çeyrekte yer almaktadır"],
+        ["Vergi takozu — bekar, ort. ücret\n(gelir vergisi + çalışan SGK + işveren SGK)",
+         "%39,0", "%34,9",
+         "Belçika %52,6; Almanya %47,9; Fransa %47,2; İngiltere %30,1"],
+        ["Vergi takozu — evli, 2 çocuk, ort. ücret",
+         "%39,0", "%25,7",
+         "Türkiye aile indirimi tanımayan OECD'de tek ülke"],
+        ["  ↳ Gelir vergisi bileşeni (ort. ücret)",
+         "~%8-10", "~%13-15",
+         "ASGARİ ücret için 0 (2022'den itibaren muafiyet)"],
+        ["  ↳ Çalışan SGK payı",
+         "%15,0", "~%9-12",
+         "Emeklilik %9 + Sağlık %5 + İşsizlik %1"],
+        ["  ↳ İşveren SGK payı (yasal)",
+         "%22,75", "~%17-20",
+         "Fiili (teşvikli): ~%17,5; Fransa ~%28-30"],
+        ["Vergi takozunda OECD en yüksek: Belçika",
+         "—", "%52,6",
+         "Türkiye OECD içinde üst çeyrekte"],
     ]
     for j, h in enumerate(tw_headers):
         tw_table.rows[0].cells[j].text = h
@@ -841,66 +881,78 @@ def create_academic_report(data: dict, output_path: str):
             for p in tw_table.rows[i+1].cells[j].paragraphs:
                 for run in p.runs:
                     run.font.size = Pt(9)
-    add_para("Kaynak: OECD Taxing Wages 2025; OECD Türkiye Country Note; URSSAF (2025); GOV.UK (2025).",
+    add_para("Kaynak: OECD Taxing Wages 2025; GİB; 193 sayılı GVK md.23/18 (2022 değişikliği).",
              italic=True, indent=False)
     add_para(
-        "Not: OECD ülkelerinde işveren SGK oranları; emeklilik, sağlık, işsizlik sigortası gibi "
-        "bileşenlerin toplamından oluşmakta olup ülkeden ülkeye büyük farklılık göstermektedir. "
-        "Türkiye'nin %22,75'lik yasal işveren prim yükü OECD ülkelerinin büyük çoğunluğunun "
-        "üzerindedir. İndirimlerin uygulandığı fiili oran sektör ve bölgeye göre değişmektedir.",
+        "Not: Türkiye'de vergi takozu yüksekliğinin temel nedeni aile indirimi bulunmaması ve "
+        "çalışan SGK payının OECD ortalamasının üzerinde seyretmesidir. Asgari ücret düzeyindeki "
+        "çalışanlar gelir vergisinden muaf olduğundan bu grubun vergi takozu daha düşüktür.",
         italic=True, indent=False
     )
 
     add_para(
-        "Uluslararası istihdam teşviki deneyimleri önemli dersler sunmaktadır:"
+        "Uluslararası istihdam teşviki ve istihdam koruma deneyimleri, her ülkenin kendi kurumsal "
+        "yapısına özgü tasarımlar geliştirdiğini göstermektedir. Aşağıda dört ülkenin deneyimi "
+        "Türkiye ile karşılaştırmalı olarak değerlendirilmektedir."
     )
 
     intl_experiences = [
-        ("Almanya — Kurzarbeit: ",
-         "Kısa çalışma programı, 2008-09 küresel krizinde yaklaşık 500.000, COVID-19 döneminde "
-         "6 milyon işçiyi kapsayarak istihdamı korumuştur. Almanya'da istihdam, GSYİH'deki %7'lik "
-         "düşüşe rağmen yalnızca %1 gerilemiştir (Tax Foundation, 2025)."),
-        ("Fransa — Réduction Générale: ",
+        ("Almanya — Kurzarbeit ve Türkiye Karşılaştırması: ",
+         "Almanya'nın kısa çalışma programı (Kurzarbeit), 2008-09 küresel krizinde ~500.000, "
+         "COVID-19 döneminde 6 milyon işçiyi kapsayarak istihdamı korumuştur. Almanya'da istihdam, "
+         "GSYİH'deki %7'lik düşüşe rağmen yalnızca %1 gerilemiştir (Tax Foundation, 2025). "
+         "Türkiye'de muadil araç Kısa Çalışma Ödeneği (KÇÖ) olmakla birlikte kapsam ve esneklik "
+         "açısından önemli sınırlılıklar taşımaktadır. Buna ek olarak, Türkiye COVID-19 sürecinde "
+         "Kısa Çalışma Ödeneği kapsamına giremeyen —özellikle prim koşulunu sağlayamayan— çalışanlar "
+         "için Nakdi Ücret Desteği (NÜD) uygulaması başlatmıştır. NÜD, günlük 34,72 TL (dönemin "
+         "asgari ücretinin %47'si) tutarında, son 60 günde en az 30 gün sigortalı olan tüm "
+         "çalışanlara açık olarak tasarlanmıştır. Bu uygulama KÇÖ'nün kapsam dışında kalan "
+         "katmanlara ulaşması bakımından anlamlı ancak ödeme düzeyi yetersiz kalmıştır."),
+        ("Fransa — Réduction Générale ve Türkiye Karşılaştırması: ",
          "Yapısal işveren sosyal katkı payı indirimi, 2024-25'te asgari ücretin 1,6 katına kadar "
-         "maaşlarda maksimum %32 oranında uygulanmıştır. 2026'da 3x asgari ücrete genişletilerek "
-         "RGDU sistemine dönüştürülmüştür. Ancak CICE vergi kredisinin ihracat üzerinde istatistiksel "
-         "olarak anlamlı bir etkisi bulunamamıştır (URSSAF, 2025; France Stratégie, 2020)."),
-        ("Güney Kore — KOBİ İstihdam Teşvikleri: ",
+         "maaşlarda maksimum %32 oranında uygulanmıştır. 2026'da RGDU sistemine dönüştürülmüştür. "
+         "Ancak CICE vergi kredisinin ihracat üzerinde istatistiksel olarak anlamlı bir etkisi "
+         "bulunamamıştır (France Stratégie, 2020). Türkiye'de 5510/7252 sayılı Kanunlar kapsamındaki "
+         "prim indirimleri Fransa'ya kıyasla daha düşük oran ve daha dar kapsama sahiptir; özellikle "
+         "aile indirimi boyutu tamamen yoktur."),
+        ("Güney Kore — KOBİ İstihdam Teşvikleri ve Türkiye Karşılaştırması: ",
          "Her ek KOBİ çalışanı için 7-7,7 milyon KRW vergi indirimi, genç KOBİ çalışanlarına "
-         "5 yıl boyunca %90 gelir vergisi muafiyeti uygulanmaktadır. Ancak 2024 araştırması, "
-         "yüksek nitelikli gençlerde mütevazı teşviklerin yüksek rezervasyon ücreti nedeniyle "
-         "etkisiz kaldığını göstermiştir (MOEL, 2024)."),
-        ("İngiltere — Employment Allowance: ",
+         "5 yıl boyunca %90 gelir vergisi muafiyeti uygulanmaktadır. Ancak yüksek nitelikli "
+         "gençlerde mütevazı teşviklerin yüksek rezervasyon ücreti nedeniyle etkisiz kaldığı "
+         "gösterilmiştir (MOEL, 2024). Türkiye'de 687 sayılı KHK kapsamında net istihdam artışı "
+         "başına SGK teşviki uygulanmaktadır; ancak bu sistem KOBİ'ye özgü değildir ve Güney "
+         "Kore'nin vergi indirimi mekanizması gibi sektörel farklılaştırma içermemektedir."),
+        ("İngiltere — Employment Allowance ve Türkiye Karşılaştırması: ",
          "Sabit işveren NIC indirimi 2025'te 10.500 GBP'ye yükseltilmiştir. İşveren NIC oranı "
-         "%13,8'den %15'e artırılırken, 100.000 GBP uygunluk tavanı kaldırılarak tüm işletmelere "
-         "erişim sağlanmıştır (GOV.UK, 2025)."),
+         "%13,8'den %15'e artırılırken tüm işletmelere erişim sağlanmıştır (GOV.UK, 2025). "
+         "İngiltere'nin sabit tutarlı (oran değil, mutlak tutar) yapısı, küçük işletmeleri "
+         "büyük işletmelere kıyasla orantısız biçimde desteklemektedir. Türkiye'de böyle bir "
+         "sabit tutar mekanizması henüz mevcut değildir."),
     ]
     for title, desc in intl_experiences:
         p = doc.add_paragraph()
         p.add_run(title).bold = True
         p.add_run(desc)
 
-    add_para(
-        "Almanya Kurzarbeit ile Türkiye'nin Kısa Çalışma Ödeneği karşılaştırması, Türkiye'nin "
-        "istihdam koruma araçlarını geliştirmek için somut bir referans çerçevesi sunmaktadır:",
-        indent=False
-    )
-    add_para("Tablo 7. Almanya Kurzarbeit — Türkiye Kısa Çalışma Ödeneği Karşılaştırması",
+    add_para("Tablo 7. Almanya Kurzarbeit — Türkiye Kısa Çalışma Ödeneği ve Nakdi Ücret Desteği Karşılaştırması",
              bold=True, indent=False)
-    kk_table = doc.add_table(rows=7, cols=3)
+    kk_table = doc.add_table(rows=8, cols=3)
     kk_table.style = "Light Grid Accent 1"
     kk_table.alignment = WD_TABLE_ALIGNMENT.CENTER
-    kk_headers = ["Boyut", "Almanya Kurzarbeit", "Türkiye Kısa Çalışma Ödeneği"]
+    kk_headers = ["Boyut", "Almanya Kurzarbeit", "Türkiye (KÇÖ + NÜD)"]
     kk_data = [
-        ["Azami süre", "21 aya kadar (kriz döneminde)", "3 ay (Bakanlar Kurulu kararıyla 6 aya uzatılabilir)"],
-        ["Ödeme oranı", "%60-%80 (süreye göre kademeli)", "%60 (sabit)"],
-        ["Yararlanma eşiği", "İşyerindeki çalışanların %10'u etkilenmiş olması",
-         "Bireysel yeterliliğe bağlı (son 3 yılda 600 gün prim)"],
-        ["Finansman", "Sosyal sigorta fonu + Hazine desteği", "İşsizlik Sigortası Fonu (İŞKUR)"],
-        ["COVID'de kapsam", "6 milyon çalışan (GSYİH düşüşüne karşın istihdam %1 geriledi)",
-         "Sınırlı kapsam; yalnızca işsizlik sigortası prim ödeyenler"],
-        ["Esneklik", "Tüm SSK katkı ödeyenlere açık",
-         "Yalnızca işsizlik sigortası prim ödeyen çalışanlar"],
+        ["Azami süre", "21 aya kadar (kriz döneminde)", "KÇÖ: 3 ay (uzatılabilir 6 ay)"],
+        ["Ödeme oranı", "%60-%80 (kademeli)", "KÇÖ: %60 sabit; NÜD: asgari ücretin ~%47'si"],
+        ["Yararlanma eşiği", "İşyerinde çalışanların %10'u etkilenmiş olması",
+         "KÇÖ: Son 3 yılda 600 gün prim; NÜD: Son 60 günde 30 gün sigortalı"],
+        ["COVID kapsam", "6 milyon çalışan; istihdam yalnızca %1 geriledi",
+         "KÇÖ sınırlı kaldı; NÜD ek katman sağladı ancak ödeme düzeyi düşük kaldı"],
+        ["Kapsam genişliği", "Tüm SSK katkı ödeyenler",
+         "KÇÖ: İşsizlik sigortası primini dolduranlar; NÜD daha geniş ama kısa süreli"],
+        ["İşveren katkısı", "İşveren SGK primlerini ödemeye devam eder",
+         "İşveren SGK yükümlülüğü devam eder; ek destek sınırlı"],
+        ["Değerlendirme", "Güçlü istihdam koruma; esneklik ve kapsam avantajı",
+         "KÇÖ+NÜD birlikte anlamlı ancak kapsam ve ödeme yetersizliği reform ihtiyacı doğuruyor"],
     ]
     for j, h in enumerate(kk_headers):
         kk_table.rows[0].cells[j].text = h
@@ -915,19 +967,11 @@ def create_academic_report(data: dict, output_path: str):
                 for run in p.runs:
                     run.font.size = Pt(9)
     add_para(
-        "Temel fark: Almanya'nın Kurzarbeit sistemi daha uzun süre, daha esnek kapsam ve kademeli "
-        "ödeme oranları ile işverenlere gerçek anlamda istihdam koruma araçları sunmaktadır. "
-        "Türkiye'nin Kısa Çalışma Ödeneği'nin özellikle kapsam genişliği ve azami süre bakımından "
-        "iyileştirilmesi, kriz dönemlerinde istihdam kayıplarını önemli ölçüde azaltabilir.",
+        "Politika çıkarımı: Türkiye'nin KÇÖ + NÜD ikili yapısını tek, daha kapsayıcı ve daha yüksek "
+        "ödeme oranlı bir kısa çalışma mekanizmasına dönüştürmesi, gelecekteki kriz dönemlerinde "
+        "istihdam kaybını önemli ölçüde sınırlayabilir. Bu reformda Kurzarbeit'ın işyeri eşiği "
+        "(çalışanların %10'u) ve kademeli ödeme (süreye bağlı %60-80) modeli referans alınabilir.",
         italic=True, indent=False
-    )
-    add_para(
-        "Fransa'nın Réduction Générale uygulaması ile kıyaslandığında, Türkiye 5510 ve 7252 sayılı "
-        "Kanunlar kapsamında kademeli prim indirimleri uygulamaktadır; ancak Türkiye'nin indirim "
-        "oranları daha düşük ve kapsam daha dardır. Güney Kore'de her yeni KOBİ çalışanı için "
-        "vergi indirimi uygulaması ile karşılaştırıldığında, Türkiye'de 687 sayılı KHK kapsamında "
-        "net istihdam artışı başına SGK teşviki mevcuttur; ancak bu sistem KOBİ'lere özgü "
-        "değildir ve kapsam görece sınırlı kalmaktadır."
     )
 
     add_para(
@@ -935,11 +979,21 @@ def create_academic_report(data: dict, output_path: str):
         "\"zaten olacak işler için para harcamak\" anlamına gelir. Örneğin bir firma, teşvik "
         "programı olsa da olmasa da bir mühendisi işe alacaktı. Teşvik verildiğinde devlet para "
         "harcamış, ancak net yeni istihdam yaratılmamıştır. Bu boşa harcanan pay, ölü ağırlık "
-        "kaybıdır. Türkiye'ye özgü çalışmalar (IZA No. 9993), bölgesel teşvik programlarının "
-        "birinde ölü ağırlık kaybını %47-78, daha iyi tasarlanmış ikinci programda %23-44 olarak "
-        "ölçmüştür. Bu rakamlar, her 100 TL teşvikin 23-78 TL'sinin net yeni istihdam yaratmadığı "
-        "anlamına gelir; geri kalanı zaten olacak istihdama gitmiştir. Bu nedenle teşvik "
-        "programlarının net istihdam artışı koşuluna bağlanması kritik öneme sahiptir."
+        "kaybıdır."
+    )
+    add_para(
+        "Türkiye'ye özgü ölü ağırlık kaybı analizi: Uysal (2016), IZA Discussion Paper No. 9993 "
+        "kapsamında Türkiye'nin bölgesel SGK prim teşviklerini fark-içi-farklar (difference-in-"
+        "differences) yöntemiyle değerlendirmiştir. Çalışmada iki farklı teşvik programı "
+        "incelenmiştir: (1) 5084 sayılı Kanun kapsamındaki ilk program (2004-2012): 49 geri kalmış "
+        "ilde uygulanan, işveren SGK payının tamamını kapsayan yoğun destek. Ölü ağırlık kaybı "
+        "%47-78 aralığında ölçülmüştür — yani her 100 TL teşvikin 47-78 TL'si zaten gerçekleşecek "
+        "istihdama gitmiştir. (2) 5510 sayılı Kanun kapsamındaki ikinci program (2008 sonrası): "
+        "Net istihdam artışı koşuluna bağlanan, daha iyi tasarlanmış yapı. Bu programda ölü ağırlık "
+        "kaybı %23-44'e gerilemiştir. Temel bulgu: Net istihdam artışı koşulu, ölü ağırlık kaybını "
+        "yaklaşık yarıya indirmiştir. Bu sonuç, teşvik programı tasarımında en kritik değişkenin "
+        "'net artış şartı' olduğunu kanıtlamakta ve Türkiye için tasarlanacak tüm yeni programlara "
+        "doğrudan politika çıkarımı sunmaktadır (Uysal, 2016; IZA DP No. 9993)."
     )
 
     add_para(
@@ -1123,45 +1177,87 @@ def create_academic_report(data: dict, output_path: str):
         "programlarının sektörel ihtiyaçlara göre farklılaştırılması gerekmektedir (IMF, 2025a)."
     )
 
-    doc.add_heading("7.6. Beceri Açığı ve Aktif İşgücü Programlarının Rolü", level=2)
+    doc.add_heading("7.6. Beceri Açığı, İşlerin Dönüşümü ve Aktif İşgücü Programları", level=2)
 
     add_para(
-        "İstihdam teşvikleri tek başına yeterli değildir; işgücü piyasasına uyum teşviksiz de "
-        "sağlanamaz. Bu iki araç birlikte tasarlanmalıdır."
+        "İstihdam teşvikleri tek başına yeterli değildir. Paralel olarak işgücünün dönüşen iş "
+        "yapısına uyumunun sağlanması gerekmektedir. Bu iki politika aracı birlikte tasarlanmadığı "
+        "sürece teşvikler kısa vadeli etki yaratır; sürdürülebilir verimlilik artışı sağlanamaz."
+    )
+
+    doc.add_heading("İşlerin Dönüşümü: Türkiye'de Hangi Meslekler Değişiyor?", level=3)
+    add_para(
+        "WEF Mesleklerin Geleceği 2025 Raporu, 2030'a kadar mevcut iş becerilerinin %39'unun "
+        "geçerliliğini yitireceğini ve işverenlerin %41'inin yapay zeka otomasyonu nedeniyle "
+        "işgücü azaltmayı planladığını ortaya koymaktadır (WEF, 2025). Bu dönüşüm Türkiye'de "
+        "sektörel bazda somut biçimlerde kendini göstermektedir."
+    )
+
+    job_transformation = [
+        ("İmalat Sanayi — Otomasyon Baskısı: ",
+         "CNC tezgâhları, robotik kaynak sistemleri ve görüntü işleme kalite kontrol sistemleri, "
+         "rutin montaj ve basit işleme görevlerini hızla otomatize etmektedir. Yok olan meslekler: "
+         "Manuel montaj operatörü, basit kalite kontrol gözetmeni. Dönüşen meslekler: CNC "
+         "programcısı, robotik sistem bakım teknisyeni, endüstriyel IoT operatörü. Bu dönüşüm "
+         "için yeni gereken beceriler; PLC programlama, sensör veri yorumlama ve otomasyon "
+         "bakımıdır. Türkiye'nin mesleki eğitim müfredatlarının bu yetkinlikleri kapsayacak "
+         "şekilde güncellenmesi zorunludur."),
+        ("Çağrı Merkezi ve İdari Hizmetler — Yapay Zeka Yerinden Edişi: ",
+         "Doğal dil işleme ve büyük dil modelleri, standart müşteri hizmetleri, randevu ve "
+         "şikâyet yönetimi görevlerinin büyük bölümünü otomatize edebilecek kapasitededir. "
+         "Yok olan meslekler: Rutin müşteri temsilcisi, veri giriş operatörü. Dönüşen meslekler: "
+         "Yapay zeka eğiticisi, müşteri deneyimi tasarımcısı, karmaşık süreç yöneticisi. "
+         "Türkiye'deki 1,4 milyon İdari Hizmetler çalışanının önemli bir bölümünü bu risk "
+         "yakından ilgilendirmektedir."),
+        ("Muhasebe ve Finans — Dijital Muhasebe Araçları: ",
+         "E-fatura, e-defter ve bulut muhasebe yazılımları, basit muhasebe tutma ve kayıt "
+         "görevlerini minimize etmiştir. Yok olan meslekler: Basit defter tutucusu, ödeme "
+         "takip görevlisi. Dönüşen meslekler: Finansal analiz uzmanı, vergi danışmanı, "
+         "CFO yardımcısı. Bu dönüşüm KOBİ'lerde çalışan düşük nitelikli muhasebe personelini "
+         "doğrudan etkilemektedir."),
+        ("Sağlık — Dijital Sağlık ve Tele-tıp Dönüşümü: ",
+         "MHRS, tele-tıp ve yapay zeka destekli görüntü analizi sistemleri yeni roller "
+         "yaratmaktadır. Dönüşen meslekler: Uzaktan hasta takip koordinatörü, dijital sağlık "
+         "veri analisti, tele-tıp hemşiresi. Kırsal bölgelerdeki sağlık çalışanları uzaktan "
+         "hizmet sunum modellerine adapte olmak durumundadır."),
+        ("Lojistik ve Ulaştırma — Otonom Araçlar ve Akıllı Depo: ",
+         "Otonom araç teknolojisi ve otomatik depo sistemleri (AGV, robotik paketleme) "
+         "geleneksel sürücü ve depo görevlerini dönüştürmektedir. Yok olan meslekler: "
+         "Manuel depo sayım görevlisi, basit rota kurye. Dönüşen meslekler: Otonom araç "
+         "filoya yöneticisi, akıllı depo sistem operatörü, son mil lojistik koordinatörü."),
+    ]
+    for title, desc in job_transformation:
+        p = doc.add_paragraph()
+        p.add_run(title).bold = True
+        p.add_run(desc)
+
+    doc.add_heading("Türkiye'de İşgücü Uyum Politikası Ne Yapmalı?", level=3)
+    add_para(
+        "TÜSİAD'ın (2023) verilerine göre Türk gençlerinin üçte biri NEET (ne eğitimde ne "
+        "istihdamda) konumundadır. Bu yapısal sorun, işgücü uyum kapasitesini en baştan "
+        "kısıtlamaktadır. Card, Kluve ve Weber'in (2018) 200+ ALMP programını kapsayan "
+        "meta-analizi, mesleki eğitim programlarının orta vadede en kalıcı istihdam ve kazanç "
+        "artışını sağladığını ortaya koymaktadır. OECD ülkeleri GSYİH'nin ortalama %0,62'sini "
+        "ALMP'ye ayırırken Türkiye bu benchmarkın belirgin altında kalmaktadır."
     )
     add_para(
-        "Dünya Ekonomik Forumu'nun (WEF) Mesleklerin Geleceği 2025 Raporu, 2030'a kadar mevcut iş "
-        "becerilerinin %39'unun geçerliliğini yitireceğini ve işverenlerin %41'inin yapay zeka "
-        "otomasyonu nedeniyle işgücü azaltmayı planladığını ortaya koymaktadır (WEF, 2025). Türkiye "
-        "bu dönüşüme hazırlıklı değildir: TÜSİAD'ın (2023) verilerine göre Türk gençlerinin üçte "
-        "biri ne okul ne çalışma durumundadır (NEET). Bu oran OECD standartlarında oldukça yüksektir "
-        "ve yapısal bir beceri açığına işaret etmektedir."
+        "İŞKUR'un mevcut programları —mesleki eğitim kursları, işbaşı eğitimi, girişimcilik "
+        "desteği, istihdam garantili kurslar— değerli ancak yetersiz kalan araçlardır. Dünya "
+        "Bankası'nın (2023) İŞKUR değerlendirmesi, gençler için işbaşı eğitim programlarının "
+        "istihdam ve kazanç artışı sağladığını teyit etmektedir. Ancak programların ölçeği, "
+        "sektörel uyumu ve işverenle koordinasyonu güçlendirilmesi gerekmektedir."
     )
     add_para(
-        "Card, Kluve ve Weber'in (2018) 200'den fazla Aktif İşgücü Piyasası Programı'nı (ALMP) "
-        "kapsayan meta-analizi, farklı program türlerinin etkinliğini karşılaştırmaktadır: iş arama "
-        "yardımı kısa dönemde en etkili sonuçları verirken; mesleki eğitim orta vadede daha kalıcı "
-        "istihdam ve kazanç artışı sağlamaktadır; kamu istihdamı programları ise en düşük etki "
-        "katsayısına sahiptir. OECD verilerine göre OECD ülkeleri ortalama olarak GSYİH'nin %0,62'sini "
-        "ALMP harcamalarına ayırmaktadır. Türkiye'nin İŞKUR harcaması bu benchmarkın altında "
-        "seyretmekte olup kapasite artırımı gerekmektedir."
-    )
-    add_para(
-        "İŞKUR'un mevcut programları —mesleki eğitim kursları, işbaşı eğitimi, girişimcilik desteği "
-        "ve istihdam garantili kurslar— değerli araçlardır. Dünya Bankası'nın (2023) İŞKUR "
-        "değerlendirmesi, gençlerin işbaşı eğitim programlarına katılımı sonucunda istihdam ve "
-        "kazanç artışı gözlemlendiğini ortaya koymaktadır. ILO'nun (2025) bulguları ise ALMP "
-        "programları teşviklerle entegre edildiğinde —eğitim + prim indirimi birlikte— etkinin "
-        "çok katmanlı hale geldiğini göstermektedir."
-    )
-    add_para(
-        "Sektörel eğitim entegrasyonu önerisi: İmalat sanayi teşvikiyle birlikte CNC operatörlüğü, "
-        "kaynak teknisyenliği ve otomasyon bakım kursları; konaklama sektörü teşvikiyle birlikte "
-        "turizm hizmetleri ve dijital pazarlama eğitimleri; bilgi ve iletişim sektörü teşvikiyle "
-        "birlikte yazılım geliştirme, veri bilimi ve siber güvenlik bootcamp'leri açılmalı ve "
-        "mezunların istihdamı SGK teşvikiyle ilişkilendirilmelidir. Bu bütünleşik yaklaşım, "
-        "Türkiye'nin hem kısa vadeli istihdam artışı hem de uzun vadeli verimlilik kazanımı "
-        "hedeflerini eş zamanlı olarak gerçekleştirmesine imkân tanıyacaktır."
+        "Sektörel beceri dönüşümü için politika önerileri: (i) İmalat sanayi SGK teşviki ile "
+        "eş zamanlı olarak CNC operatörlüğü, robotik bakım ve endüstriyel IoT kursları "
+        "açılmalı; (ii) İdari Hizmetler teşviki ile birlikte müşteri deneyimi ve yapay zeka "
+        "eğitimi entegre edilmeli; (iii) Bilgi-İletişim teşvikine koşut yazılım, veri bilimi "
+        "ve siber güvenlik bootcamp'leri desteklenmeli; (iv) Sağlık sektörü teşvikiyle "
+        "birlikte tele-tıp hemşiresi ve dijital sağlık koordinatörü yetiştirme programları "
+        "hayata geçirilmeli; (v) Her teşvik başvurusuna sektörel eğitim planı eklenmesi şartı "
+        "getirilmeli, eğitimi tamamlayan çalışanlar için ek SGK indirimi tanınmalıdır. "
+        "Tüm bu programlar İŞKUR veri tabanı aracılığıyla izlenmeli ve Card et al. (2018) "
+        "meta-analizinin önerdiği bağımsız etki değerlendirmesine tabi tutulmalıdır."
     )
 
     doc.add_page_break()
@@ -1177,10 +1273,11 @@ def create_academic_report(data: dict, output_path: str):
     )
 
     conclusions = [
-        "Türkiye ekonomisinde 8 sektör (İmalat, İnşaat, İdari Destek, Konaklama, Sağlık, Mesleki "
-        "Faaliyetler, Eğitim, Kamu Yönetimi) hem yüksek istihdam kapasitesine sahip hem de yüksek "
-        "işgücü maliyeti taşımaktadır. Bu sektörler toplam istihdamın yaklaşık %75'ini oluşturmakta "
-        "ve teşvik politikalarının birincil hedef grubudur.",
+        "Türkiye ekonomisinde 7 sektör (İmalat, İnşaat, İdari Destek, Konaklama, Sağlık, Mesleki "
+        "Faaliyetler, Eğitim) hem yüksek istihdam kapasitesine sahip hem de yüksek işgücü maliyeti "
+        "taşımaktadır. Bu sektörler toplam istihdamın yaklaşık %70'ini oluşturmakta ve teşvik "
+        "politikalarının birincil hedef grubudur. Kamu Yönetimi ve Savunma, GKD ölçüm metodolojisi "
+        "nedeniyle teşvik kapsamı dışında tutulmuştur.",
 
         "AB CBAM'ın 2026'da yürürlüğe girmesi, Türkiye imalat sanayinin yeşil dönüşümünü acil bir "
         "öncelik haline getirmiştir. Yılda 8 milyar Euro'luk ihracatın korunması için karbon "
